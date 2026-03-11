@@ -1,0 +1,2275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TalentRadar — Autonomous Hiring Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════
+   DESIGN DIRECTION: Editorial × Industrial
+   Cream/off-white light mode with rich ink
+   accents. Newspaper-meets-terminal energy.
+   Fraunces for bold display, IBM Plex Mono
+   for data/code, DM Sans for UI copy.
+═══════════════════════════════════════ */
+
+    :root {
+      --ink: #0f0e0c;
+      --paper: #f5f0e8;
+      --paper2: #ede8de;
+      --paper3: #e4ddd0;
+      --rule: #cdc5b4;
+      --rule2: #b8af9e;
+      --amber: #c8640a;
+      --amber2: #e8891a;
+      --teal: #0a6b5e;
+      --teal2: #0e8f7e;
+      --rose: #b02a1e;
+      --rose2: #d43a2c;
+      --slate: #4a5568;
+      --slate2: #718096;
+      --muted: #8a8070;
+      --r: 6px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 14px;
+    }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Subtle paper texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(0deg,
+          transparent,
+          transparent 28px,
+          rgba(0, 0, 0, 0.018) 28px,
+          rgba(0, 0, 0, 0.018) 29px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: var(--ink);
+      color: var(--paper);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      height: 54px;
+      border-bottom: 3px solid var(--amber);
+    }
+
+    .logo-mark {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-glyph {
+      width: 30px;
+      height: 30px;
+      background: var(--amber);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      line-height: 1;
+    }
+
+    .logo-name {
+      font-family: 'Fraunces', serif;
+      font-weight: 900;
+      font-size: 20px;
+      letter-spacing: -0.5px;
+      color: var(--paper);
+    }
+
+    .logo-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: rgba(245, 240, 232, 0.45);
+      letter-spacing: 0.5px;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .hdr-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: rgba(245, 240, 232, 0.6);
+    }
+
+    .hdr-pill.active {
+      background: rgba(200, 100, 10, 0.2);
+      border-color: var(--amber);
+      color: var(--amber2);
+    }
+
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--muted);
+    }
+
+    .pulse-dot.live {
+      background: var(--amber2);
+      box-shadow: 0 0 0 0 var(--amber2);
+      animation: sonar 1.5s ease-out infinite;
+    }
+
+    @keyframes sonar {
+      0% {
+        box-shadow: 0 0 0 0 rgba(232, 137, 26, 0.6);
+      }
+
+      70% {
+        box-shadow: 0 0 0 7px rgba(232, 137, 26, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(232, 137, 26, 0);
+      }
+    }
+
+    .btn-hdr {
+      padding: 7px 16px;
+      background: var(--amber);
+      color: var(--ink);
+      border: none;
+      border-radius: 5px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-hdr:hover {
+      background: var(--amber2);
+    }
+
+    /* ─── LAYOUT ─── */
+    .app-shell {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      grid-template-rows: auto 1fr;
+      min-height: calc(100vh - 54px);
+    }
+
+    /* ─── LEFT SIDEBAR ─── */
+    .sidebar {
+      grid-row: 1 / 3;
+      background: var(--paper2);
+      border-right: 1px solid var(--rule);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .sidebar-section {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .sidebar-section:last-child {
+      border-bottom: none;
+      flex: 1;
+    }
+
+    .section-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-eyebrow::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--rule);
+    }
+
+    .field {
+      margin-bottom: 12px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--slate);
+      margin-bottom: 5px;
+      font-family: 'IBM Plex Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      background: var(--paper);
+      border: 1px solid var(--rule2);
+      border-radius: var(--r);
+      padding: 8px 11px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--amber);
+      box-shadow: 0 0 0 3px rgba(200, 100, 10, 0.1);
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 72px;
+      line-height: 1.5;
+    }
+
+    .field select option {
+      background: var(--paper);
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: var(--muted);
+    }
+
+    /* Tags input */
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 6px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--paper);
+      border: 1px solid var(--rule2);
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 12px;
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--slate);
+    }
+
+    .tag .tag-x {
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    .tag .tag-x:hover {
+      color: var(--rose2);
+    }
+
+    .tag-input-row {
+      display: flex;
+      gap: 5px;
+    }
+
+    .tag-input-row input {
+      flex: 1;
+      padding: 6px 9px;
+      font-size: 12px;
+      font-family: 'IBM Plex Mono', monospace;
+      background: var(--paper);
+      border: 1px solid var(--rule2);
+      border-radius: 4px;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .tag-input-row input:focus {
+      border-color: var(--amber);
+    }
+
+    .tag-input-row button {
+      background: var(--paper3);
+      border: 1px solid var(--rule2);
+      border-radius: 4px;
+      padding: 6px 10px;
+      cursor: pointer;
+      color: var(--slate);
+      font-size: 14px;
+      transition: all 0.15s;
+    }
+
+    .tag-input-row button:hover {
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+
+    /* Mode toggles */
+    .toggle-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+    }
+
+    .toggle-opt {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 10px;
+      background: var(--paper);
+      border: 1px solid var(--rule2);
+      border-radius: var(--r);
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.15s;
+      user-select: none;
+    }
+
+    .toggle-opt:hover {
+      border-color: var(--amber);
+    }
+
+    .toggle-opt.sel {
+      background: rgba(200, 100, 10, 0.08);
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+
+    .toggle-opt input {
+      display: none;
+    }
+
+    .toggle-icon {
+      font-size: 15px;
+    }
+
+    /* RUN BUTTON */
+    .run-btn {
+      width: 100%;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      border-radius: var(--r);
+      padding: 13px;
+      cursor: pointer;
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .run-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 40%, rgba(255, 255, 255, 0.04));
+    }
+
+    .run-btn:hover:not(:disabled) {
+      background: #1a1916;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .run-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .run-btn .btn-stripe {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--amber);
+    }
+
+    /* Progress */
+    .progress-block {
+      margin-top: 14px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .progress-track {
+      height: 4px;
+      background: var(--rule);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--amber), var(--amber2));
+      transition: width 0.5s cubic-bezier(.4, 0, .2, 1);
+      width: 0%;
+    }
+
+    /* Agent status list */
+    .agent-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-top: 4px;
+    }
+
+    .agent-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 9px;
+      border-radius: 5px;
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      transition: border-color 0.2s;
+    }
+
+    .agent-row.st-running {
+      border-color: rgba(200, 100, 10, 0.4);
+      background: rgba(200, 100, 10, 0.04);
+    }
+
+    .agent-row.st-done {
+      border-color: rgba(10, 107, 94, 0.35);
+      background: rgba(10, 107, 94, 0.04);
+    }
+
+    .agent-row.st-error {
+      border-color: rgba(176, 42, 30, 0.35);
+      background: rgba(176, 42, 30, 0.04);
+    }
+
+    .agent-row.st-waiting {
+      opacity: 0.5;
+    }
+
+    .agent-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--rule2);
+    }
+
+    .st-running .agent-status-dot {
+      background: var(--amber2);
+      animation: sonar 1.2s ease-out infinite;
+    }
+
+    .st-done .agent-status-dot {
+      background: var(--teal2);
+    }
+
+    .st-error .agent-status-dot {
+      background: var(--rose2);
+    }
+
+    .agent-site {
+      flex: 1;
+      color: var(--slate);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .agent-step {
+      color: var(--muted);
+      font-size: 10px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 80px;
+    }
+
+    /* ─── TOP BAR ─── */
+    .topbar {
+      background: var(--paper2);
+      border-bottom: 1px solid var(--rule);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .stats-inline {
+      display: flex;
+      gap: 24px;
+    }
+
+    .stat-inline {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-inline-num {
+      font-family: 'Fraunces', serif;
+      font-weight: 900;
+      font-size: 22px;
+      line-height: 1;
+      letter-spacing: -1px;
+      color: var(--ink);
+    }
+
+    .stat-inline-lbl {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .topbar-right {
+      display: flex;
+      gap: 8px;
+    }
+
+    .topbar-btn {
+      padding: 6px 14px;
+      border-radius: 5px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      background: var(--paper);
+      border: 1px solid var(--rule2);
+      color: var(--slate);
+      transition: all 0.15s;
+    }
+
+    .topbar-btn:hover {
+      border-color: var(--ink);
+      color: var(--ink);
+    }
+
+    .topbar-btn.primary {
+      background: var(--ink);
+      color: var(--paper);
+      border-color: var(--ink);
+    }
+
+    .topbar-btn.primary:hover {
+      background: #1a1916;
+    }
+
+    /* ─── MAIN AREA ─── */
+    .main-area {
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    /* Tabs */
+    .tab-row {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid var(--rule);
+      margin-bottom: 22px;
+    }
+
+    .tab-btn {
+      padding: 8px 20px;
+      background: transparent;
+      border: none;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.15s;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tab-btn:hover {
+      color: var(--ink);
+    }
+
+    .tab-btn.active {
+      color: var(--ink);
+      border-bottom-color: var(--amber);
+      font-weight: 600;
+    }
+
+    .tab-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--paper3);
+      color: var(--muted);
+      border-radius: 10px;
+      padding: 1px 6px;
+      font-size: 10px;
+      min-width: 18px;
+    }
+
+    .tab-btn.active .tab-badge {
+      background: var(--amber);
+      color: var(--ink);
+    }
+
+    /* ─── LIVE STREAM ─── */
+    .stream-wrap {
+      background: var(--ink);
+      border-radius: var(--r);
+      border: 1px solid #2a2820;
+      overflow: hidden;
+    }
+
+    .stream-header {
+      background: #1a1916;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #2a2820;
+    }
+
+    .stream-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: rgba(245, 240, 232, 0.5);
+      letter-spacing: 0.5px;
+    }
+
+    .stream-body {
+      height: 420px;
+      overflow-y: auto;
+      padding: 14px 16px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      line-height: 1.9;
+    }
+
+    .stream-body::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .stream-body::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .stream-body::-webkit-scrollbar-thumb {
+      background: #3a3830;
+      border-radius: 2px;
+    }
+
+    .s-empty {
+      color: rgba(245, 240, 232, 0.2);
+      font-style: italic;
+    }
+
+    .s-line {
+      display: flex;
+      gap: 10px;
+    }
+
+    .s-ts {
+      color: rgba(245, 240, 232, 0.2);
+      font-size: 10px;
+      padding-top: 1px;
+      flex-shrink: 0;
+    }
+
+    .s-site {
+      color: #c8a060;
+      font-size: 10px;
+      flex-shrink: 0;
+      width: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .s-evt {
+      flex-shrink: 0;
+      padding: 1px 7px;
+      border-radius: 3px;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 600;
+    }
+
+    .e-nav {
+      background: rgba(0, 184, 255, 0.15);
+      color: #60c8f0;
+    }
+
+    .e-search {
+      background: rgba(200, 100, 10, 0.2);
+      color: #e8891a;
+    }
+
+    .e-scroll {
+      background: rgba(255, 211, 42, 0.15);
+      color: #f0c830;
+    }
+
+    .e-click {
+      background: rgba(192, 132, 252, 0.15);
+      color: #c898f0;
+    }
+
+    .e-read {
+      background: rgba(0, 229, 160, 0.15);
+      color: #40d090;
+    }
+
+    .e-done {
+      background: rgba(0, 229, 160, 0.2);
+      color: #40e090;
+    }
+
+    .e-err {
+      background: rgba(200, 40, 30, 0.2);
+      color: #e05040;
+    }
+
+    .e-think {
+      background: rgba(139, 145, 163, 0.15);
+      color: #909898;
+    }
+
+    .e-sys {
+      background: rgba(245, 240, 232, 0.08);
+      color: #a0a098;
+    }
+
+    .s-msg {
+      color: rgba(245, 240, 232, 0.65);
+      flex: 1;
+      word-break: break-all;
+    }
+
+    .s-msg.ok {
+      color: #40e090;
+    }
+
+    .s-msg.err {
+      color: #e05040;
+    }
+
+    .s-msg.hl {
+      color: rgba(245, 240, 232, 0.9);
+    }
+
+    /* ─── JOBS TABLE ─── */
+    .data-panel {
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      border-radius: var(--r);
+      overflow: hidden;
+    }
+
+    .data-panel-hdr {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--paper2);
+    }
+
+    .data-panel-title {
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .data-panel-meta {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .tbl-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead tr {
+      background: var(--paper2);
+    }
+
+    th {
+      text-align: left;
+      padding: 9px 14px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      white-space: nowrap;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--rule);
+      vertical-align: top;
+      font-size: 13px;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(200, 100, 10, 0.025);
+    }
+
+    .job-title {
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .job-co {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .sal-range {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--teal);
+    }
+
+    .sal-na {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .loc-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 3px;
+      background: var(--paper2);
+      border: 1px solid var(--rule);
+      font-size: 11px;
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--slate2);
+    }
+
+    .seniority-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .sen-senior {
+      background: rgba(10, 107, 94, 0.1);
+      color: var(--teal);
+      border: 1px solid rgba(10, 107, 94, 0.2);
+    }
+
+    .sen-mid {
+      background: rgba(200, 100, 10, 0.1);
+      color: var(--amber);
+      border: 1px solid rgba(200, 100, 10, 0.2);
+    }
+
+    .sen-junior {
+      background: rgba(139, 145, 163, 0.1);
+      color: var(--slate2);
+      border: 1px solid rgba(139, 145, 163, 0.2);
+    }
+
+    .sen-lead {
+      background: rgba(176, 42, 30, 0.1);
+      color: var(--rose2);
+      border: 1px solid rgba(176, 42, 30, 0.2);
+    }
+
+    .source-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-family: 'IBM Plex Mono', monospace;
+      background: var(--paper3);
+      border: 1px solid var(--rule);
+      color: var(--muted);
+    }
+
+    .job-link {
+      color: var(--amber);
+      text-decoration: none;
+      font-size: 12px;
+    }
+
+    .job-link:hover {
+      text-decoration: underline;
+    }
+
+    .skills-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .skill-chip {
+      padding: 1px 7px;
+      border-radius: 3px;
+      font-size: 10px;
+      background: var(--paper2);
+      border: 1px solid var(--rule);
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--slate);
+    }
+
+    /* ─── INTELLIGENCE BRIEF ─── */
+    .brief-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .brief-card {
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      border-radius: var(--r);
+      overflow: hidden;
+    }
+
+    .brief-card-hdr {
+      background: var(--paper2);
+      border-bottom: 1px solid var(--rule);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .brief-card-body {
+      padding: 16px;
+    }
+
+    /* Bar chart */
+    .bar-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bar-lbl {
+      width: 90px;
+      font-size: 11px;
+      color: var(--slate);
+      font-family: 'IBM Plex Mono', monospace;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .bar-track {
+      flex: 1;
+      background: var(--rule);
+      border-radius: 2px;
+      height: 8px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--amber);
+      transition: width 0.7s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .bar-val {
+      width: 40px;
+      text-align: right;
+      font-size: 11px;
+      color: var(--muted);
+      font-family: 'IBM Plex Mono', monospace;
+      flex-shrink: 0;
+    }
+
+    /* Alert feed */
+    .alert-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .alert-item {
+      padding: 10px 12px;
+      border-radius: 5px;
+      border-left: 3px solid transparent;
+      background: var(--paper2);
+      border: 1px solid var(--rule);
+    }
+
+    .alert-item.a-hot {
+      border-left-color: var(--rose2);
+    }
+
+    .alert-item.a-opp {
+      border-left-color: var(--teal2);
+    }
+
+    .alert-item.a-trend {
+      border-left-color: var(--amber2);
+    }
+
+    .alert-title {
+      font-weight: 500;
+      font-size: 13px;
+      color: var(--ink);
+    }
+
+    .alert-body {
+      font-size: 12px;
+      color: var(--slate2);
+      margin-top: 3px;
+      line-height: 1.5;
+    }
+
+    /* Salary heatmap - simple table */
+    .sal-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .sal-table th {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 6px 10px;
+      text-align: left;
+    }
+
+    .sal-table td {
+      padding: 8px 10px;
+      font-size: 12px;
+      border-top: 1px solid var(--rule);
+    }
+
+    .sal-cell {
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 500;
+    }
+
+    .sal-hi {
+      color: var(--teal);
+    }
+
+    .sal-lo {
+      color: var(--rose2);
+    }
+
+    .sal-md {
+      color: var(--amber);
+    }
+
+    /* Trend tiles */
+    .trend-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    .trend-tile {
+      background: var(--paper2);
+      border: 1px solid var(--rule);
+      border-radius: 5px;
+      padding: 10px 12px;
+      text-align: center;
+    }
+
+    .trend-num {
+      font-family: 'Fraunces', serif;
+      font-weight: 900;
+      font-size: 20px;
+      letter-spacing: -1px;
+    }
+
+    .trend-num.up {
+      color: var(--teal);
+    }
+
+    .trend-num.down {
+      color: var(--rose2);
+    }
+
+    .trend-num.neu {
+      color: var(--amber);
+    }
+
+    .trend-desc {
+      font-size: 10px;
+      color: var(--muted);
+      font-family: 'IBM Plex Mono', monospace;
+      margin-top: 3px;
+      letter-spacing: 0.3px;
+    }
+
+    /* ─── EMPTY / LOADING STATES ─── */
+    .empty-state {
+      padding: 48px;
+      text-align: center;
+      color: var(--muted);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+    }
+
+    .empty-icon {
+      font-size: 32px;
+      opacity: 0.35;
+      margin-bottom: 10px;
+    }
+
+    .empty-text {
+      line-height: 1.7;
+    }
+
+    /* Spinner */
+    .spin {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid rgba(245, 240, 232, 0.15);
+      border-top-color: var(--paper);
+      flex-shrink: 0;
+      animation: rot 0.7s linear infinite;
+    }
+
+    .spin.dark {
+      border-color: rgba(15, 14, 12, 0.12);
+      border-top-color: var(--ink);
+    }
+
+    @keyframes rot {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ─── TOAST ─── */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 999;
+      background: var(--ink);
+      color: var(--paper);
+      padding: 12px 18px;
+      border-radius: var(--r);
+      font-size: 13px;
+      border-left: 4px solid var(--amber);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.28s cubic-bezier(.4, 0, .2, 1);
+      max-width: 320px;
+    }
+
+    #toast.visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        grid-row: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .brief-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .trend-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══ HEADER ═══ -->
+  <header>
+    <div class="logo-mark">
+      <div class="logo-glyph">📡</div>
+      <div>
+        <div class="logo-name">TalentRadar</div>
+        <div class="logo-tag">Autonomous Hiring Intelligence · Powered by TinyFish</div>
+      </div>
+    </div>
+    <div class="header-controls">
+      <div class="hdr-pill" id="statusPill">
+        <span class="pulse-dot" id="pulseDot"></span>
+        <span id="statusLabel">Not connected</span>
+      </div>
+      <button class="btn-hdr" onclick="showApiKeySetup()">API Key</button>
+    </div>
+  </header>
+
+  <div class="app-shell">
+
+    <!-- ═══ LEFT SIDEBAR ═══ -->
+    <aside class="sidebar">
+
+      <!-- API Key -->
+      <div class="sidebar-section" id="apiSection">
+        <div class="section-eyebrow">TinyFish Connection</div>
+        <div class="field">
+          <label>API Key</label>
+          <input type="password" id="apiKey" placeholder="tf_live_xxxxxxxxxx" oninput="onApiKeyChange()" />
+        </div>
+        <div style="font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;line-height:1.6">
+          Get 500 free steps at<br>
+          <a href="https://agent.tinyfish.ai" target="_blank" style="color:var(--amber)">agent.tinyfish.ai</a>
+          · no card needed
+        </div>
+      </div>
+
+      <!-- Search Config -->
+      <div class="sidebar-section">
+        <div class="section-eyebrow">Mission Parameters</div>
+
+        <div class="field">
+          <label>Job Role / Title</label>
+          <input type="text" id="jobRole" value="Senior Software Engineer" />
+        </div>
+
+        <div class="field">
+          <label>Company / Competitors</label>
+          <div class="tag-cloud" id="companyTags"></div>
+          <div class="tag-input-row">
+            <input type="text" id="newCompany" placeholder="stripe.com"
+              onkeydown="if(event.key==='Enter')addCompany()" />
+            <button onclick="addCompany()">+</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Location Focus</label>
+          <input type="text" id="location" value="San Francisco, CA" />
+        </div>
+
+        <div class="field">
+          <label>Data Sources</label>
+          <div class="toggle-grid" id="sourceToggles">
+            <label class="toggle-opt sel" data-val="linkedin">
+              <input type="checkbox" checked>
+              <span class="toggle-icon">💼</span> LinkedIn
+            </label>
+            <label class="toggle-opt sel" data-val="indeed">
+              <input type="checkbox" checked>
+              <span class="toggle-icon">🔍</span> Indeed
+            </label>
+            <label class="toggle-opt sel" data-val="glassdoor">
+              <input type="checkbox" checked>
+              <span class="toggle-icon">🚪</span> Glassdoor
+            </label>
+            <label class="toggle-opt sel" data-val="careers">
+              <input type="checkbox" checked>
+              <span class="toggle-icon">🏢</span> Careers Pages
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Browser Profile</label>
+          <select id="browserProfile">
+            <option value="stealth">Stealth (anti-bot)</option>
+            <option value="lite">Lite (faster)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Run + Progress -->
+      <div class="sidebar-section">
+        <button class="run-btn" id="runBtn" onclick="runAnalysis()">
+          <div class="btn-stripe"></div>
+          <span id="runIcon">▶</span>
+          <span id="runLabel">Deploy Agents</span>
+        </button>
+
+        <div class="progress-block" id="progressBlock" style="display:none">
+          <div class="progress-label">
+            <span id="progressText">Initializing...</span>
+            <span id="progressFrac">0/0</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agent status -->
+      <div class="sidebar-section">
+        <div class="section-eyebrow">Agent Fleet</div>
+        <div class="agent-list" id="agentList">
+          <div style="font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace">
+            No agents deployed yet
+          </div>
+        </div>
+      </div>
+
+    </aside><!-- /sidebar -->
+
+    <!-- ═══ MAIN CONTENT ═══ -->
+    <div style="display:flex;flex-direction:column">
+
+      <!-- Top stats bar -->
+      <div class="topbar">
+        <div class="stats-inline">
+          <div class="stat-inline">
+            <div class="stat-inline-num" id="sJobs">0</div>
+            <div class="stat-inline-lbl">Jobs Found</div>
+          </div>
+          <div class="stat-inline">
+            <div class="stat-inline-num" id="sAgents">0</div>
+            <div class="stat-inline-lbl">Agents Run</div>
+          </div>
+          <div class="stat-inline">
+            <div class="stat-inline-num" id="sSalary">—</div>
+            <div class="stat-inline-lbl">Median Salary</div>
+          </div>
+          <div class="stat-inline">
+            <div class="stat-inline-num" id="sAlerts">0</div>
+            <div class="stat-inline-lbl">Intel Signals</div>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <button class="topbar-btn" onclick="clearAll()">Clear</button>
+          <button class="topbar-btn primary" onclick="exportJSON()">Export JSON</button>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="main-area">
+        <div class="tab-row">
+          <button class="tab-btn active" onclick="switchTab('stream',this)" data-tab="stream">
+            📡 Live Stream
+          </button>
+          <button class="tab-btn" onclick="switchTab('jobs',this)" data-tab="jobs">
+            💼 Jobs
+            <span class="tab-badge" id="tabJobs">0</span>
+          </button>
+          <button class="tab-btn" onclick="switchTab('intel',this)" data-tab="intel">
+            🧠 Intelligence Brief
+          </button>
+          <button class="tab-btn" onclick="switchTab('raw',this)" data-tab="raw">
+            { } Raw JSON
+          </button>
+        </div>
+
+        <!-- STREAM TAB -->
+        <div id="tab-stream">
+          <div class="stream-wrap">
+            <div class="stream-header">
+              <span class="stream-title">// SSE AGENT EVENT STREAM — TinyFish Web Agent API</span>
+              <div id="streamStatus"
+                style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(245,240,232,0.35)">idle</div>
+            </div>
+            <div class="stream-body" id="streamBody">
+              <span class="s-empty">// No stream events yet. Configure your mission and click Deploy Agents.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- JOBS TAB -->
+        <div id="tab-jobs" style="display:none">
+          <div class="data-panel">
+            <div class="data-panel-hdr">
+              <div class="data-panel-title">Job Postings Intelligence</div>
+              <div class="data-panel-meta" id="jobsMeta">Awaiting agent data</div>
+            </div>
+            <div class="tbl-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Role & Company</th>
+                    <th>Salary Range</th>
+                    <th>Level</th>
+                    <th>Location</th>
+                    <th>Key Skills</th>
+                    <th>Source</th>
+                    <th>Link</th>
+                  </tr>
+                </thead>
+                <tbody id="jobsBody">
+                  <tr>
+                    <td colspan="7">
+                      <div class="empty-state">
+                        <div class="empty-icon">💼</div>
+                        <div class="empty-text">Run an analysis to populate job data</div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- INTEL TAB -->
+        <div id="tab-intel" style="display:none">
+          <div id="intelContent">
+            <div class="empty-state"
+              style="background:var(--paper);border:1px solid var(--rule);border-radius:var(--r);padding:60px">
+              <div class="empty-icon">🧠</div>
+              <div class="empty-text">Intelligence brief is generated automatically<br>after your agents complete their
+                mission.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RAW JSON TAB -->
+        <div id="tab-raw" style="display:none">
+          <div class="stream-wrap">
+            <div class="stream-header">
+              <span class="stream-title">// RAW TINYFISH API RESPONSE OBJECTS</span>
+            </div>
+            <div class="stream-body" id="rawBody"
+              style="height:420px;white-space:pre-wrap;word-break:break-all;color:rgba(245,240,232,0.6);font-size:11px">
+              // No data yet
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /main-area -->
+    </div><!-- /main col -->
+  </div><!-- /app-shell -->
+
+  <div id="toast"></div>
+
+  <script>
+    /* ══════════════════════════════════════════
+       STATE
+    ══════════════════════════════════════════ */
+    let apiKey = localStorage.getItem('tr_apikey') || '';
+    let companies = ['stripe.com', 'openai.com', 'figma.com', 'vercel.com'];
+    let selectedSources = new Set(['linkedin', 'indeed', 'glassdoor', 'careers']);
+    let allJobs = [];
+    let rawResponses = [];
+    let isRunning = false;
+    let completedAgents = 0;
+    let totalAgents = 0;
+
+    /* ══════════════════════════════════════════
+       INIT
+    ══════════════════════════════════════════ */
+    function init() {
+      renderCompanyTags();
+      setupSourceToggles();
+      if (apiKey) {
+        document.getElementById('apiKey').value = apiKey;
+        setConnectionStatus(true);
+      }
+    }
+
+    function onApiKeyChange() {
+      apiKey = document.getElementById('apiKey').value.trim();
+      localStorage.setItem('tr_apikey', apiKey);
+      setConnectionStatus(!!apiKey);
+    }
+
+    function setConnectionStatus(connected) {
+      const dot = document.getElementById('pulseDot');
+      const lbl = document.getElementById('statusLabel');
+      const pill = document.getElementById('statusPill');
+      dot.className = 'pulse-dot' + (connected ? ' live' : '');
+      lbl.textContent = connected ? 'Connected' : 'Not connected';
+      pill.className = 'hdr-pill' + (connected ? ' active' : '');
+    }
+
+    function showApiKeySetup() {
+      document.getElementById('apiSection').scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('apiKey').focus();
+    }
+
+    /* ══════════════════════════════════════════
+       COMPANIES TAG INPUT
+    ══════════════════════════════════════════ */
+    function renderCompanyTags() {
+      document.getElementById('companyTags').innerHTML = companies.map((c, i) => `
+    <span class="tag">
+      ${escH(c)}
+      <span class="tag-x" onclick="removeCompany(${i})">×</span>
+    </span>
+  `).join('');
+    }
+    function addCompany() {
+      const inp = document.getElementById('newCompany');
+      const v = inp.value.trim().replace(/^https?:\/\//, '').replace(/\/$/, '');
+      if (v && !companies.includes(v)) { companies.push(v); renderCompanyTags(); }
+      inp.value = '';
+    }
+    function removeCompany(i) { companies.splice(i, 1); renderCompanyTags(); }
+
+    /* ══════════════════════════════════════════
+       SOURCE TOGGLES
+    ══════════════════════════════════════════ */
+    function setupSourceToggles() {
+      document.querySelectorAll('#sourceToggles .toggle-opt').forEach(el => {
+        el.addEventListener('click', () => {
+          el.classList.toggle('sel');
+          const v = el.dataset.val;
+          if (selectedSources.has(v)) selectedSources.delete(v);
+          else selectedSources.add(v);
+        });
+      });
+    }
+
+    /* ══════════════════════════════════════════
+       TABS
+    ══════════════════════════════════════════ */
+    function switchTab(name, btn) {
+      ['stream', 'jobs', 'intel', 'raw'].forEach(t => {
+        document.getElementById('tab-' + t).style.display = (t === name) ? '' : 'none';
+        document.querySelector(`[data-tab="${t}"]`)?.classList.remove('active');
+      });
+      document.getElementById('tab-' + name).style.display = '';
+      if (btn) btn.classList.add('active');
+    }
+
+    /* ══════════════════════════════════════════
+       MAIN ANALYSIS RUN
+    ══════════════════════════════════════════ */
+    async function runAnalysis() {
+      if (!apiKey) { toast('⚠️ Enter your TinyFish API key first'); showApiKeySetup(); return; }
+      if (isRunning) return;
+      if (companies.length === 0 && !selectedSources.size) { toast('Add companies or select sources'); return; }
+
+      isRunning = true;
+      allJobs = [];
+      rawResponses = [];
+      completedAgents = 0;
+
+      setRunningState(true);
+      clearStreamBody();
+      clearTable();
+      clearIntel();
+      updateStats(0, 0, '—', 0);
+
+      const role = document.getElementById('jobRole').value.trim() || 'Software Engineer';
+      const loc = document.getElementById('location').value.trim() || 'San Francisco';
+      const profile = document.getElementById('browserProfile').value;
+
+      // Build agent mission list
+      const missions = buildMissions(role, loc, profile);
+      totalAgents = missions.length;
+      document.getElementById('sAgents').textContent = totalAgents;
+      document.getElementById('progressBlock').style.display = '';
+      updateProgress(0, totalAgents, 'Preparing agents...');
+      renderAgentList(missions.map(m => ({ name: m.label, status: 'waiting' })));
+
+      sysLog(`🚀 Deploying ${totalAgents} autonomous agents across ${missions.map(m => m.label).join(', ')}`);
+      sysLog(`🎯 Mission: Find "${role}" roles in ${loc}`);
+      sysLog(`${'─'.repeat(64)}`);
+
+      // Switch to stream tab so user sees the live action
+      switchTab('stream', document.querySelector('[data-tab="stream"]'));
+      document.getElementById('streamStatus').textContent = 'LIVE';
+
+      // Run all agents concurrently
+      const promises = missions.map((m, i) => runSingleAgent(m, i));
+      await Promise.allSettled(promises);
+
+      // Post-processing
+      renderJobsTable();
+      renderIntelBrief();
+      setRunningState(false);
+      document.getElementById('streamStatus').textContent = 'complete';
+      document.getElementById('progressBlock').style.display = 'none';
+      sysLog(`✅ Mission complete — ${allJobs.length} job postings collected from ${completedAgents}/${totalAgents} agents`);
+      toast(`✅ ${allJobs.length} jobs found across ${completedAgents} sources!`);
+
+      // Auto switch to jobs tab
+      setTimeout(() => switchTab('jobs', document.querySelector('[data-tab="jobs"]')), 800);
+    }
+
+    function buildMissions(role, loc, profile) {
+      const missions = [];
+      const roleEncoded = encodeURIComponent(role);
+      const locEncoded = encodeURIComponent(loc);
+
+      if (selectedSources.has('linkedin')) {
+        missions.push({
+          label: 'LinkedIn Jobs',
+          url: `https://www.linkedin.com/jobs/search/?keywords=${roleEncoded}&location=${locEncoded}&f_TPR=r86400`,
+          goal: buildGoal('LinkedIn', role, loc),
+          profile: 'stealth',
+          icon: '💼'
+        });
+      }
+      if (selectedSources.has('indeed')) {
+        missions.push({
+          label: 'Indeed',
+          url: `https://www.indeed.com/jobs?q=${roleEncoded}&l=${locEncoded}&sort=date`,
+          goal: buildGoal('Indeed', role, loc),
+          profile,
+          icon: '🔍'
+        });
+      }
+      if (selectedSources.has('glassdoor')) {
+        missions.push({
+          label: 'Glassdoor',
+          url: `https://www.glassdoor.com/Job/jobs.htm?sc.keyword=${roleEncoded}&locT=C&locId=1147401`,
+          goal: buildGoal('Glassdoor', role, loc),
+          profile: 'stealth',
+          icon: '🚪'
+        });
+      }
+      // Company careers pages
+      if (selectedSources.has('careers')) {
+        companies.forEach(co => {
+          missions.push({
+            label: co,
+            url: `https://${co}/careers`,
+            goal: buildCareersGoal(role, co),
+            profile,
+            icon: '🏢'
+          });
+        });
+      }
+      return missions;
+    }
+
+    function buildGoal(source, role, loc) {
+      return `Search for "${role}" jobs in "${loc}" on ${source}. 
+Extract ALL visible job listings on the current page (up to 15 results).
+For each job, return a JSON array: 
+[{
+  "job_title": string,
+  "company": string,
+  "location": string (city/remote),
+  "salary_min": number or null (annual USD),
+  "salary_max": number or null (annual USD),
+  "salary_text": string or null (raw salary text if shown),
+  "seniority": "junior"|"mid"|"senior"|"lead"|"staff"|"principal"|"unknown",
+  "skills": string[] (top 5 tech skills from description),
+  "posted_date": string or null,
+  "job_url": string,
+  "remote_ok": boolean,
+  "source": "${source}",
+  "company_size": string or null,
+  "equity_offered": boolean
+}]
+If you need to click "See more jobs" or scroll to reveal more, do so. 
+Return ONLY the JSON array, no explanation.`;
+    }
+
+    function buildCareersGoal(role, company) {
+      return `Navigate the careers page and find open roles similar to "${role}".
+Try common paths if /careers doesn't work: /jobs, /about/careers, /work-here.
+Extract up to 10 relevant job listings as JSON array:
+[{
+  "job_title": string,
+  "company": "${company}",
+  "location": string,
+  "salary_min": number or null,
+  "salary_max": number or null,
+  "salary_text": string or null,
+  "seniority": "junior"|"mid"|"senior"|"lead"|"staff"|"principal"|"unknown",
+  "skills": string[],
+  "posted_date": string or null,
+  "job_url": string,
+  "remote_ok": boolean,
+  "source": "Company Careers",
+  "company_size": string or null,
+  "equity_offered": boolean
+}]
+If no jobs found at all, return []. Return ONLY the JSON array.`;
+    }
+
+    /* ══════════════════════════════════════════
+       SINGLE AGENT RUNNER
+    ══════════════════════════════════════════ */
+    async function runSingleAgent(mission, idx) {
+      updateAgentStatus(idx, 'running', 'Navigating...');
+      agentLog(mission.label, 'nav', `→ ${mission.url.slice(0, 60)}...`);
+
+      const body = {
+        url: mission.url,
+        goal: mission.goal,
+        browser_profile: mission.profile,
+        proxy_config: { enabled: false }
+      };
+
+      try {
+        const res = await fetch('https://agent.tinyfish.ai/v1/automation/run-sse', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-API-Key': apiKey
+          },
+          body: JSON.stringify(body)
+        });
+
+        if (!res.ok) {
+          const err = await res.text();
+          agentLog(mission.label, 'err', `HTTP ${res.status} — ${err.slice(0, 80)}`);
+          updateAgentStatus(idx, 'error', 'Failed');
+          completedAgents++;
+          updateProgress(completedAgents, totalAgents, null);
+          return;
+        }
+
+        // Consume SSE stream
+        const reader = res.body.getReader();
+        const dec = new TextDecoder();
+        let buf = '';
+        let finalResult = null;
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buf += dec.decode(value, { stream: true });
+          const lines = buf.split('\n');
+          buf = lines.pop();
+
+          for (const line of lines) {
+            if (!line.startsWith('data:')) continue;
+            const raw = line.slice(5).trim();
+            if (!raw || raw === '[DONE]') continue;
+            try {
+              const evt = JSON.parse(raw);
+              dispatchSSEEvent(mission, idx, evt);
+              if (evt.type === 'COMPLETE' && evt.status === 'COMPLETED') {
+                finalResult = evt.resultJson ?? evt.result_json;
+                rawResponses.push({ agent: mission.label, response: evt });
+              }
+            } catch (_) { }
+          }
+        }
+
+        // Parse jobs from result
+        if (finalResult) {
+          const jobs = extractJobs(finalResult, mission.label);
+          allJobs.push(...jobs);
+          updateAgentStatus(idx, 'done', `${jobs.length} jobs`);
+          agentLog(mission.label, 'done', `✓ Extracted ${jobs.length} job postings`);
+          document.getElementById('sJobs').textContent = allJobs.length;
+          document.getElementById('tabJobs').textContent = allJobs.length;
+        } else {
+          updateAgentStatus(idx, 'error', 'No result');
+          agentLog(mission.label, 'err', 'Agent completed but returned no data');
+        }
+
+        rawResponses.push({ agent: mission.label, raw: finalResult });
+        updateRawView();
+
+      } catch (err) {
+        agentLog(mission.label, 'err', `Exception: ${err.message}`);
+        updateAgentStatus(idx, 'error', 'Exception');
+      } finally {
+        completedAgents++;
+        updateProgress(completedAgents, totalAgents, null);
+      }
+    }
+
+    function dispatchSSEEvent(mission, idx, evt) {
+      const type = String(evt.type || evt.event || '').toLowerCase();
+      const msg = evt.message || evt.content || evt.action || evt.description || '';
+
+      if (type.includes('navigate') || type.includes('goto')) agentLog(mission.label, 'nav', msg || 'Navigating page');
+      else if (type.includes('search') || type.includes('type')) agentLog(mission.label, 'search', msg || 'Searching jobs');
+      else if (type.includes('scroll')) agentLog(mission.label, 'scroll', msg || 'Scrolling results');
+      else if (type.includes('click')) agentLog(mission.label, 'click', msg || 'Clicking element');
+      else if (type.includes('read') || type.includes('extract')) agentLog(mission.label, 'read', msg || 'Reading job data');
+      else if (type.includes('think') || type.includes('plan')) agentLog(mission.label, 'think', msg || 'Reasoning...');
+      else if (type.includes('complete')) { } // handled in caller
+      else if (type.includes('error')) agentLog(mission.label, 'err', msg || 'Error');
+      else if (msg) agentLog(mission.label, 'think', msg);
+    }
+
+    /* ══════════════════════════════════════════
+       DATA EXTRACTION HELPERS
+    ══════════════════════════════════════════ */
+    function extractJobs(raw, source) {
+      try {
+        let data = raw;
+        if (typeof data === 'string') {
+          const clean = data.replace(/```json|```/g, '').trim();
+          data = JSON.parse(clean);
+        }
+        if (Array.isArray(data)) return data.map(j => ({ ...j, _source: source }));
+        if (data && Array.isArray(data.jobs)) return data.jobs.map(j => ({ ...j, _source: source }));
+        if (data && Array.isArray(data.results)) return data.results.map(j => ({ ...j, _source: source }));
+        // Try to find any array in the object
+        for (const v of Object.values(data || {})) {
+          if (Array.isArray(v) && v.length && v[0].job_title) return v.map(j => ({ ...j, _source: source }));
+        }
+      } catch (_) { }
+      return [];
+    }
+
+    /* ══════════════════════════════════════════
+       RENDER JOBS TABLE
+    ══════════════════════════════════════════ */
+    function renderJobsTable() {
+      const body = document.getElementById('jobsBody');
+      document.getElementById('jobsMeta').textContent = `${allJobs.length} postings · last updated ${new Date().toLocaleTimeString()}`;
+
+      if (!allJobs.length) {
+        body.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">😔</div><div class="empty-text">No job data returned. Verify your API key is valid and try again.</div></div></td></tr>`;
+        return;
+      }
+
+      body.innerHTML = allJobs.map(j => {
+        const salHtml = (j.salary_min || j.salary_max)
+          ? `<span class="sal-range">${j.salary_min ? '$' + num(j.salary_min) : '?'}${j.salary_max ? ' – $' + num(j.salary_max) : '+'}</span>`
+          : j.salary_text
+            ? `<span class="sal-range" style="font-size:11px">${escH(j.salary_text)}</span>`
+            : `<span class="sal-na">Not listed</span>`;
+
+        const seniorityMap = {
+          senior: 'sen-senior', staff: 'sen-senior', principal: 'sen-senior',
+          mid: 'sen-mid', junior: 'sen-junior', lead: 'sen-lead'
+        };
+        const senCls = seniorityMap[j.seniority] || 'sen-junior';
+        const senHtml = `<span class="seniority-badge ${senCls}">${escH(j.seniority || 'unknown')}</span>`;
+
+        const skillsHtml = Array.isArray(j.skills) && j.skills.length
+          ? `<div class="skills-row">${j.skills.slice(0, 4).map(s => `<span class="skill-chip">${escH(s)}</span>`).join('')}</div>`
+          : '—';
+
+        const linkHtml = j.job_url
+          ? `<a class="job-link" href="${escH(j.job_url)}" target="_blank">View →</a>`
+          : '—';
+
+        const locTxt = [j.location, j.remote_ok ? '(Remote OK)' : null].filter(Boolean).join(' ');
+
+        return `
+      <tr>
+        <td>
+          <div class="job-title">${escH(j.job_title || '—')}</div>
+          <div class="job-co">${escH(j.company || '—')}</div>
+        </td>
+        <td>${salHtml}</td>
+        <td>${senHtml}</td>
+        <td><span class="loc-pill">${escH(locTxt || '—')}</span></td>
+        <td>${skillsHtml}</td>
+        <td><span class="source-chip">${escH(j.source || j._source || '—')}</span></td>
+        <td>${linkHtml}</td>
+      </tr>
+    `;
+      }).join('');
+    }
+
+    /* ══════════════════════════════════════════
+       INTELLIGENCE BRIEF
+    ══════════════════════════════════════════ */
+    function renderIntelBrief() {
+      const el = document.getElementById('intelContent');
+      if (!allJobs.length) { return; }
+
+      // Compute analytics
+      const salaries = allJobs.filter(j => j.salary_max || j.salary_min)
+        .map(j => (j.salary_max + j.salary_min) / 2 || j.salary_max || j.salary_min);
+      const medSal = salaries.length ? median(salaries) : null;
+      const avgSal = salaries.length ? Math.round(salaries.reduce((a, b) => a + b, 0) / salaries.length) : null;
+
+      if (medSal) document.getElementById('sSalary').textContent = '$' + (medSal / 1000).toFixed(0) + 'k';
+
+      const senCount = {};
+      const skillCount = {};
+      const remoteCount = allJobs.filter(j => j.remote_ok).length;
+      const sourceCount = {};
+
+      allJobs.forEach(j => {
+        const s = j.seniority || 'unknown';
+        senCount[s] = (senCount[s] || 0) + 1;
+        const src = j.source || j._source || 'other';
+        sourceCount[src] = (sourceCount[src] || 0) + 1;
+        (j.skills || []).forEach(sk => { skillCount[sk] = (skillCount[sk] || 0) + 1; });
+      });
+
+      const topSkills = Object.entries(skillCount).sort((a, b) => b[1] - a[1]).slice(0, 8);
+      const maxSkill = topSkills[0]?.[1] || 1;
+
+      // Salary by seniority table
+      const salBySen = {};
+      allJobs.forEach(j => {
+        if (!j.salary_max && !j.salary_min) return;
+        const s = j.seniority || 'unknown';
+        if (!salBySen[s]) salBySen[s] = [];
+        salBySen[s].push((j.salary_max + j.salary_min) / 2 || j.salary_max || j.salary_min);
+      });
+
+      // Alerts
+      const alerts = generateAlerts(allJobs, medSal, remoteCount, topSkills);
+      document.getElementById('sAlerts').textContent = alerts.length;
+
+      el.innerHTML = `
+    <div class="trend-grid" style="margin-bottom:16px">
+      <div class="trend-tile">
+        <div class="trend-num neu">${allJobs.length}</div>
+        <div class="trend-desc">Total Openings</div>
+      </div>
+      <div class="trend-tile">
+        <div class="trend-num up">${Math.round(remoteCount / allJobs.length * 100)}%</div>
+        <div class="trend-desc">Remote Friendly</div>
+      </div>
+      <div class="trend-tile">
+        <div class="trend-num ${medSal > 180000 ? 'up' : 'neu'}">
+          ${medSal ? '$' + (medSal / 1000).toFixed(0) + 'k' : 'N/A'}
+        </div>
+        <div class="trend-desc">Median Salary</div>
+      </div>
+      <div class="trend-tile">
+        <div class="trend-num up">${allJobs.filter(j => j.equity_offered).length}</div>
+        <div class="trend-desc">With Equity</div>
+      </div>
+      <div class="trend-tile">
+        <div class="trend-num neu">${Object.keys(sourceCount).length}</div>
+        <div class="trend-desc">Sources</div>
+      </div>
+      <div class="trend-tile">
+        <div class="trend-num ${(senCount['senior'] || 0) > (senCount['junior'] || 0) ? 'up' : 'down'}">
+          ${((senCount['senior'] || 0) + (senCount['staff'] || 0) + (senCount['principal'] || 0) + (senCount['lead'] || 0))} Sr
+        </div>
+        <div class="trend-desc">Senior+ Roles</div>
+      </div>
+    </div>
+
+    <div class="brief-grid">
+
+      <div class="brief-card">
+        <div class="brief-card-hdr">🔧 Top Required Skills</div>
+        <div class="brief-card-body">
+          <div class="bar-chart">
+            ${topSkills.map(([skill, cnt]) => `
+              <div class="bar-row">
+                <div class="bar-lbl">${escH(skill)}</div>
+                <div class="bar-track"><div class="bar-fill" style="width:${Math.round(cnt / maxSkill * 100)}%"></div></div>
+                <div class="bar-val">${cnt} jobs</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div class="brief-card">
+        <div class="brief-card-hdr">💰 Salary by Seniority</div>
+        <div class="brief-card-body">
+          <table class="sal-table">
+            <thead><tr><th>Level</th><th>Avg Salary</th><th>Count</th></tr></thead>
+            <tbody>
+              ${Object.entries(salBySen).sort((a, b) => median(b[1]) - median(a[1])).map(([sen, sals]) => {
+        const avg = Math.round(sals.reduce((a, b) => a + b, 0) / sals.length);
+        const cls = avg > 200000 ? 'sal-hi' : avg > 140000 ? 'sal-md' : 'sal-lo';
+        return `<tr>
+                  <td>${sen}</td>
+                  <td class="sal-cell ${cls}">$${(avg / 1000).toFixed(0)}k</td>
+                  <td style="color:var(--muted)">${sals.length}</td>
+                </tr>`;
+      }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="brief-card">
+        <div class="brief-card-hdr">📊 Level Distribution</div>
+        <div class="brief-card-body">
+          <div class="bar-chart">
+            ${Object.entries(senCount).sort((a, b) => b[1] - a[1]).map(([sen, cnt]) => `
+              <div class="bar-row">
+                <div class="bar-lbl">${escH(sen)}</div>
+                <div class="bar-track"><div class="bar-fill" style="width:${Math.round(cnt / allJobs.length * 100)}%;background:var(--teal)"></div></div>
+                <div class="bar-val">${cnt}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div class="brief-card">
+        <div class="brief-card-hdr">🔔 Intelligence Alerts</div>
+        <div class="brief-card-body">
+          <div class="alert-feed">
+            ${alerts.map(a => `
+              <div class="alert-item ${a.cls}">
+                <div class="alert-title">${a.title}</div>
+                <div class="alert-body">${a.body}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  `;
+    }
+
+    function generateAlerts(jobs, medSal, remoteCount, topSkills) {
+      const alerts = [];
+      if (medSal && medSal > 200000) alerts.push({ cls: 'a-hot', title: '🔥 High Compensation Market', body: `Median salary at $${(medSal / 1000).toFixed(0)}k — top-of-market compensation. Strong negotiating position for candidates.` });
+      if (remoteCount / jobs.length > 0.5) alerts.push({ cls: 'a-opp', title: '🌍 Remote-First Market', body: `${Math.round(remoteCount / jobs.length * 100)}% of roles offer remote work. Talent pool is geographically unrestricted.` });
+      const scount = jobs.filter(j => j.seniority === 'senior' || j.seniority === 'staff' || j.seniority === 'principal').length;
+      if (scount / jobs.length > 0.4) alerts.push({ cls: 'a-trend', title: '📈 Heavy Senior Hiring', body: `${Math.round(scount / jobs.length * 100)}% of openings are senior-level — companies are scaling their core engineering teams.` });
+      const noSal = jobs.filter(j => !j.salary_min && !j.salary_max).length;
+      if (noSal / jobs.length > 0.5) alerts.push({ cls: 'a-hot', title: '💡 Salary Opacity Advantage', body: `${Math.round(noSal / jobs.length * 100)}% of companies hide salaries. With visible comp you can attract more applicants.` });
+      if (topSkills[0]) alerts.push({ cls: 'a-opp', title: `🔑 "${topSkills[0][0]}" is most in-demand`, body: `Appears in ${topSkills[0][1]} out of ${jobs.length} job postings. Critical skill gap to address in hiring.` });
+      return alerts.slice(0, 5);
+    }
+
+    /* ══════════════════════════════════════════
+       STREAM LOGGING
+    ══════════════════════════════════════════ */
+    function clearStreamBody() {
+      document.getElementById('streamBody').innerHTML = '';
+    }
+
+    function sysLog(msg) {
+      const el = document.getElementById('streamBody');
+      const d = document.createElement('div');
+      d.className = 's-line';
+      d.innerHTML = `<span class="s-ts">${ts()}</span><span class="s-evt e-sys">SYS</span><span class="s-msg hl">${escH(msg)}</span>`;
+      el.appendChild(d);
+      el.scrollTop = el.scrollHeight;
+    }
+
+    const evtClassMap = {
+      nav: 'e-nav', search: 'e-search', scroll: 'e-scroll',
+      click: 'e-click', read: 'e-read', done: 'e-done',
+      err: 'e-err', think: 'e-think'
+    };
+
+    function agentLog(site, evt, msg) {
+      const el = document.getElementById('streamBody');
+      const d = document.createElement('div');
+      d.className = 's-line';
+      const cls = evtClassMap[evt] || 'e-think';
+      const msgCls = evt === 'done' ? 'ok' : evt === 'err' ? 'err' : '';
+      d.innerHTML = `<span class="s-ts">${ts()}</span><span class="s-site">${escH(site)}</span><span class="s-evt ${cls}">${evt.toUpperCase()}</span><span class="s-msg ${msgCls}">${escH(msg)}</span>`;
+      el.appendChild(d);
+      el.scrollTop = el.scrollHeight;
+    }
+
+    /* ══════════════════════════════════════════
+       AGENT LIST SIDEBAR
+    ══════════════════════════════════════════ */
+    let agentStatuses = [];
+    function renderAgentList(agents) {
+      agentStatuses = agents;
+      const el = document.getElementById('agentList');
+      el.innerHTML = agents.map((a, i) => `
+    <div class="agent-row st-${a.status}" id="agent-${i}">
+      <span class="agent-status-dot"></span>
+      <span class="agent-site">${escH(a.name)}</span>
+      <span class="agent-step" id="astep-${i}">${escH(a.status)}</span>
+    </div>
+  `).join('');
+    }
+    function updateAgentStatus(idx, status, step) {
+      const row = document.getElementById('agent-' + idx);
+      if (row) { row.className = 'agent-row st-' + status; }
+      const stepEl = document.getElementById('astep-' + idx);
+      if (stepEl) stepEl.textContent = step;
+    }
+
+    /* ══════════════════════════════════════════
+       PROGRESS
+    ══════════════════════════════════════════ */
+    function updateProgress(done, total, label) {
+      const pct = total ? Math.round((done / total) * 100) : 0;
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('progressFrac').textContent = `${done}/${total}`;
+      if (label) document.getElementById('progressText').textContent = label;
+      else document.getElementById('progressText').textContent = done < total ? `Agent ${done} complete...` : 'All agents finished';
+    }
+
+    /* ══════════════════════════════════════════
+       RUN STATE
+    ══════════════════════════════════════════ */
+    function setRunningState(v) {
+      isRunning = v;
+      const btn = document.getElementById('runBtn');
+      const icon = document.getElementById('runIcon');
+      const lbl = document.getElementById('runLabel');
+      btn.disabled = v;
+      if (v) {
+        icon.innerHTML = '<div class="spin"></div>';
+        lbl.textContent = 'Agents Running...';
+      } else {
+        icon.textContent = '▶';
+        lbl.textContent = 'Deploy Agents';
+      }
+    }
+
+    /* ══════════════════════════════════════════
+       CLEAR / EXPORT
+    ══════════════════════════════════════════ */
+    function clearTable() {
+      document.getElementById('jobsBody').innerHTML = `<tr><td colspan="7"><div class="empty-state" style="padding:28px"><div class="empty-icon">⏳</div><div class="empty-text">Agents collecting data...</div></div></td></tr>`;
+      document.getElementById('jobsMeta').textContent = 'Awaiting agent data';
+      document.getElementById('tabJobs').textContent = '0';
+    }
+    function clearIntel() {
+      document.getElementById('intelContent').innerHTML = `<div class="empty-state" style="background:var(--paper);border:1px solid var(--rule);border-radius:var(--r);padding:60px"><div class="empty-icon">⏳</div><div class="empty-text">Generating brief...</div></div>`;
+    }
+    function clearAll() {
+      allJobs = []; rawResponses = [];
+      clearTable(); clearIntel(); clearStreamBody();
+      updateStats(0, 0, '—', 0);
+      document.getElementById('progressBlock').style.display = 'none';
+      document.getElementById('rawBody').textContent = '// No data yet';
+      document.getElementById('tabJobs').textContent = '0';
+      document.getElementById('agentList').innerHTML = `<div style="font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace">No agents deployed yet</div>`;
+      document.getElementById('streamBody').innerHTML = `<span class="s-empty">// Stream cleared.</span>`;
+    }
+    function updateStats(jobs, agents, salary, alerts) {
+      document.getElementById('sJobs').textContent = jobs;
+      document.getElementById('sAgents').textContent = agents;
+      document.getElementById('sSalary').textContent = salary;
+      document.getElementById('sAlerts').textContent = alerts;
+    }
+    function updateRawView() {
+      document.getElementById('rawBody').textContent = JSON.stringify(rawResponses, null, 2);
+    }
+    function exportJSON() {
+      if (!allJobs.length) { toast('No data to export'); return; }
+      const blob = new Blob([JSON.stringify({ jobs: allJobs, meta: { exported: new Date().toISOString(), count: allJobs.length } }, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `talentreader_${Date.now()}.json`;
+      a.click();
+      toast('📦 JSON exported!');
+    }
+
+    /* ══════════════════════════════════════════
+       UTILITIES
+    ══════════════════════════════════════════ */
+    function ts() { return new Date().toLocaleTimeString('en', { hour12: false }); }
+    function escH(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+    function num(n) { return Number(n).toLocaleString(); }
+    function median(arr) {
+      if (!arr.length) return 0;
+      const s = [...arr].sort((a, b) => a - b);
+      const m = Math.floor(s.length / 2);
+      return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+    }
+
+    let toastTimer;
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('visible');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('visible'), 3200);
+    }
+
+    /* ══════════════════════════════════════════
+       BOOT
+    ══════════════════════════════════════════ */
+    init();
+  </script>
+</body>
+
+</html>
